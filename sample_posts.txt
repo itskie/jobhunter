@@ -1,0 +1,25 @@
+Hiring | Cloud Engineer Trainee | Chennai
+JIT Global is looking for a Cloud Engineer Trainee.
+Skills: AWS, Linux, Python
+Experience: Fresher / 0-1 Year
+Send your resume to: hr@example.com
+
+---
+
+We're Hiring: DevOps Engineer Intern
+Tech Solutions is looking for a DevOps Engineer Intern.
+Experience: Fresher / 0-1 Year
+Qualification: BCA / B.Tech / MCA
+Send your resume: careers@example.com
+
+---
+
+We're Hiring: Lead Architect (10+ Years Experience)
+Looking for 10+ years experience in Enterprise Java & Spring Boot.
+Send CV: lead@example.com
+
+---
+
+WE'RE HIRING | Cloud & DevOps Engineer
+Fresh Graduates Welcome | 0-2 Years Experience | Remote
+Send your resumes to: talent@example.com

@@ -1,0 +1,25 @@
+# Virtual Environment
+venv/
+.venv/
+env/
+
+# Python Cache
+__pycache__/
+*.py[cod]
+*$py.class
+
+# Secrets & Private Auth
+.env
+linkedin_cookies.json
+
+# Application Logs & History
+applied_history.json
+sent_applications.csv
+*.log
+
+# Personal Resumes / PDFs
+*.pdf
+
+# OS Generated
+.DS_Store
+Thumbs.db
