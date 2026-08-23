@@ -14,18 +14,18 @@ NETWORK_HISTORY_FILE = BASE_DIR / "network_history.json"
 SEARCH_TARGETS = [
     {
         "role_type": "manager",
-        "query": '"Engineering Manager" ("DevOps" OR "Cloud") India',
-        "url": "https://www.linkedin.com/search/results/people/?keywords=%22Engineering%20Manager%22%20(%22DevOps%22%20OR%20%22Cloud%22)%20India&origin=GLOBAL_SEARCH_HEADER"
+        "query": "Engineering Manager DevOps India",
+        "url": "https://www.linkedin.com/search/results/people/?keywords=Engineering%20Manager%20DevOps%20India&origin=GLOBAL_SEARCH_HEADER"
     },
     {
         "role_type": "recruiter",
-        "query": '"Technical Recruiter" ("DevOps" OR "Cloud") India',
-        "url": "https://www.linkedin.com/search/results/people/?keywords=%22Technical%20Recruiter%22%20(%22DevOps%22%20OR%20%22Cloud%22)%20India&origin=GLOBAL_SEARCH_HEADER"
+        "query": "Technical Recruiter Cloud DevOps India",
+        "url": "https://www.linkedin.com/search/results/people/?keywords=Technical%20Recruiter%20Cloud%20DevOps%20India&origin=GLOBAL_SEARCH_HEADER"
     },
     {
         "role_type": "lead",
-        "query": '"DevOps Lead" OR "Cloud Architect" Bangalore OR Pune OR Remote',
-        "url": "https://www.linkedin.com/search/results/people/?keywords=%22DevOps%20Lead%22%20OR%20%22Cloud%20Architect%22%20India&origin=GLOBAL_SEARCH_HEADER"
+        "query": "DevOps Lead Cloud Architect India",
+        "url": "https://www.linkedin.com/search/results/people/?keywords=DevOps%20Lead%20Cloud%20Architect%20India&origin=GLOBAL_SEARCH_HEADER"
     }
 ]
 
@@ -53,9 +53,8 @@ class LinkedInNetworker:
         except Exception as e:
             print(f"⚠️ Error saving network history: {e}")
 
-    def generate_note(self, name: str, headline: str, role_type: str) -> str:
+    def generate_note(self, name: str, role_type: str) -> str:
         first_name = name.split()[0] if name else "there"
-        # Clean title / remove Dr/Mr/salutations if needed
         first_name = re.sub(r'[^a-zA-Z]', '', first_name).capitalize() or "there"
 
         if role_type == "manager":
@@ -65,19 +64,17 @@ class LinkedInNetworker:
         else:
             note = f"Hi {first_name}, I'm a Cloud & DevOps Engineer passionate about AWS, K8s, and developer tooling (built InfraGenie & JobHunter). Would love to connect!"
 
-        # Ensure strict LinkedIn 300 characters limit
         return note[:295]
 
     def run(self, max_connects: int = MAX_CONNECTS_PER_RUN):
         if not COOKIES_FILE.exists():
             print(f"❌ Error: LinkedIn cookies file not found at {COOKIES_FILE}")
-            print("Please ensure you have authenticated your session first.")
             return
 
         print("=" * 65)
-        print("🤝 AUTONOMOUS LINKEDIN NETWORKER (Engineering Managers & Tech Recruiters)")
+        print("🤝 AUTONOMOUS LINKEDIN NETWORKER (Profile-Direct Mode)")
         print(f"🎯 Target Max Connects This Run: {max_connects}")
-        print(f"🛡️ Safety Pacing: 5-10s human delays enabled")
+        print(f"🛡️ Safety Pacing: 6-12s human delays enabled")
         print("=" * 65)
 
         sent_connects = 0
@@ -92,7 +89,6 @@ class LinkedInNetworker:
                 viewport={"width": 1280, "height": 800}
             )
 
-            # Load persistent cookies
             with open(COOKIES_FILE, "r") as f:
                 cookies = json.load(f)
             context.add_cookies(cookies)
@@ -111,98 +107,102 @@ class LinkedInNetworker:
                 try:
                     page.goto(search_url, timeout=45000, wait_until="domcontentloaded")
                     time.sleep(random.uniform(4.0, 6.0))
-
-                    # Scroll to trigger lazy loading of people cards
-                    page.evaluate("window.scrollBy(0, 800)")
+                    page.evaluate("window.scrollBy(0, 1000)")
                     time.sleep(2.0)
 
-                    # Locate all people result containers
-                    # Search result cards typically have data-view-name="search-entity-result-universal-template" or .reusable-search__result-container
-                    cards = page.query_selector_all(".reusable-search__result-container, li.artdeco-list__item, [data-view-name*='search-entity']")
+                    # Extract all profile /in/ links
+                    profile_links = []
+                    links = page.query_selector_all('a[href*="/in/"]')
+                    for l in links:
+                        href = l.get_attribute("href")
+                        if href and "/in/" in href:
+                            clean_href = href.split("?")[0].rstrip("/")
+                            raw_text = l.inner_text().strip()
+                            name = raw_text.split("\n")[0].strip()
+                            if name and "LinkedIn Member" not in name and len(name) > 2:
+                                if clean_href not in [p["url"] for p in profile_links] and clean_href not in self.history:
+                                    profile_links.append({"name": name, "url": clean_href})
 
-                    print(f"    Found {len(cards)} profile cards on page.")
+                    print(f"    Discovered {len(profile_links)} fresh profiles to connect with.")
 
-                    for card in cards:
+                    for profile in profile_links:
                         if sent_connects >= max_connects:
                             break
 
-                        # Extract name
-                        name_el = card.query_selector("span[dir='ltr'] span[aria-hidden='true'], .entity-result__title-text a, a[data-field='card-headline']")
-                        name = name_el.inner_text().strip() if name_el else ""
+                        name = profile["name"]
+                        p_url = profile["url"]
 
-                        # Extract headline
-                        headline_el = card.query_selector(".entity-result__primary-subtitle, .entity-result__summary")
-                        headline = headline_el.inner_text().strip() if headline_el else ""
-
-                        if not name or "LinkedIn Member" in name:
+                        if p_url in self.history or name in self.history:
                             continue
 
-                        # Check deduplication
-                        if name in self.history:
-                            continue
-
-                        # Check if Connect button is present
-                        connect_btn = None
-                        buttons = card.query_selector_all("button")
-                        for btn in buttons:
-                            btn_text = btn.inner_text().strip().lower()
-                            if "connect" in btn_text and "pending" not in btn_text:
-                                connect_btn = btn
-                                break
-
-                        if not connect_btn:
-                            continue
-
-                        print(f"\n👉 Targeting: {name} | {headline[:45]}...")
-
-                        # Click Connect
+                        print(f"\n👉 Visiting Profile: {name} ➔ {p_url}")
                         try:
-                            connect_btn.scroll_into_view_if_needed()
-                            time.sleep(random.uniform(1.0, 2.0))
+                            page.goto(p_url, timeout=30000, wait_until="domcontentloaded")
+                            time.sleep(random.uniform(3.0, 5.0))
+
+                            # Check for direct Connect button
+                            connect_btn = None
+                            buttons = page.query_selector_all("button")
+                            for btn in buttons:
+                                b_text = btn.inner_text().strip().lower()
+                                if b_text == "connect" or "invite" in b_text:
+                                    connect_btn = btn
+                                    break
+
+                            # If not direct, check "More" button
+                            if not connect_btn:
+                                more_btn = page.query_selector("button:has-text('More'), button[aria-label='More actions']")
+                                if more_btn:
+                                    more_btn.click()
+                                    time.sleep(1.0)
+                                    # Look for connect inside dropdown
+                                    connect_in_dropdown = page.query_selector("div[aria-label*='Invite'], div[role='button']:has-text('Connect'), span:has-text('Connect')")
+                                    if connect_in_dropdown:
+                                        connect_btn = connect_in_dropdown
+
+                            if not connect_btn:
+                                print(f"    ⏭️ No Connect button found (Already connected or Following). Skipping.")
+                                self._save_history(p_url)
+                                continue
+
+                            # Click Connect
                             connect_btn.click()
                             time.sleep(random.uniform(2.0, 3.0))
 
-                            # Check for "Add a note" button in modal
+                            # Check for "Add a note" modal
                             add_note_btn = page.query_selector("button[aria-label='Add a note'], button:has-text('Add a note')")
-
                             if add_note_btn and add_note_btn.is_visible():
                                 add_note_btn.click()
                                 time.sleep(random.uniform(1.5, 2.5))
 
-                                note_text = self.generate_note(name, headline, role_type)
+                                note_text = self.generate_note(name, role_type)
                                 textarea = page.query_selector("textarea[name='message'], textarea#custom-message")
                                 if textarea:
                                     textarea.fill(note_text)
                                     time.sleep(random.uniform(1.0, 2.0))
 
-                                # Click Send
                                 send_btn = page.query_selector("button[aria-label='Send invitation'], button[aria-label='Send now'], button:has-text('Send')")
                                 if send_btn and send_btn.is_visible():
                                     send_btn.click()
                                     print(f"    ✉️ Sent custom note: \"{note_text[:60]}...\"")
                             else:
-                                # Send without note if modal didn't present add note
                                 send_btn = page.query_selector("button[aria-label='Send without a note'], button[aria-label='Send now'], button:has-text('Send')")
                                 if send_btn and send_btn.is_visible():
                                     send_btn.click()
-                                    print(f"    ✉️ Sent connection invitation directly.")
+                                    print(f"    ✉️ Sent direct invitation.")
 
                             sent_connects += 1
+                            self._save_history(p_url)
                             self._save_history(name)
-                            print(f"    ✅ Successfully connected with {name}! (Total sent: {sent_connects}/{max_connects})")
+                            print(f"    ✅ Successfully sent connection request to {name}! (Total: {sent_connects}/{max_connects})")
 
-                            # Human delay
-                            sleep_time = random.uniform(6.0, 11.0)
+                            sleep_time = random.uniform(7.0, 12.0)
                             print(f"    ⏳ Pacing safety delay: {sleep_time:.1f}s...")
                             time.sleep(sleep_time)
 
                         except Exception as e:
                             print(f"    ⚠️ Could not complete connect for {name}: {e}")
-                            # Dismiss any open dialog
-                            dismiss_btn = page.query_selector("button[aria-label='Dismiss']")
-                            if dismiss_btn:
-                                dismiss_btn.click()
-                            time.sleep(1.0)
+                            self._save_history(p_url)
 
                 except Exception as e:
                     print(f"⚠️ Error scanning stream {query_name}: {e}")
