@@ -4,13 +4,17 @@ import time
 import random
 from pathlib import Path
 from playwright.sync_api import sync_playwright
-import config
 
 BASE_DIR = Path(__file__).resolve().parent
 COOKIES_FILE = BASE_DIR / "linkedin_cookies.json"
 NETWORK_HISTORY_FILE = BASE_DIR / "network_history.json"
 
 SEARCH_TARGETS = [
+    {
+        "role_type": "grow",
+        "query": "People You May Know in Tech & Cloud",
+        "url": "https://www.linkedin.com/mynetwork/grow/"
+    },
     {
         "role_type": "manager",
         "query": "Engineering Manager DevOps India",
@@ -20,11 +24,6 @@ SEARCH_TARGETS = [
         "role_type": "recruiter",
         "query": "Technical Recruiter Cloud DevOps India",
         "url": "https://www.linkedin.com/search/results/people/?keywords=Technical%20Recruiter%20Cloud%20DevOps%20India&origin=GLOBAL_SEARCH_HEADER"
-    },
-    {
-        "role_type": "lead",
-        "query": "DevOps Lead Cloud Architect India",
-        "url": "https://www.linkedin.com/search/results/people/?keywords=DevOps%20Lead%20Cloud%20Architect%20India&origin=GLOBAL_SEARCH_HEADER"
     }
 ]
 
@@ -44,8 +43,8 @@ class LinkedInNetworker:
                 print(f"⚠️ Error loading network history: {e}")
         return set()
 
-    def _save_history(self, profile_url_or_name: str):
-        self.history.add(profile_url_or_name)
+    def _save_history(self, identifier: str):
+        self.history.add(identifier)
         try:
             with open(NETWORK_HISTORY_FILE, "w", encoding="utf-8") as f:
                 json.dump({"connected_profiles": list(self.history)}, f, indent=2)
@@ -58,9 +57,9 @@ class LinkedInNetworker:
             return
 
         print("=" * 65)
-        print("🤝 AUTONOMOUS LINKEDIN NETWORKER (Direct Connect Mode — No Notes)")
+        print("🤝 AUTONOMOUS LINKEDIN NETWORKER (Verified 1-Click Connect)")
         print(f"🎯 Target Max Connects This Run: {max_connects}")
-        print(f"🛡️ Safety Pacing: 6-12s human delays enabled")
+        print(f"🛡️ Safety Pacing: 6-10s human delays enabled")
         print("=" * 65)
 
         sent_connects = 0
@@ -81,110 +80,135 @@ class LinkedInNetworker:
 
             page = context.new_page()
 
-            for target in SEARCH_TARGETS:
-                if sent_connects >= max_connects:
-                    break
+            # Stream 1: Grow Network Page (1-Click Instant Connects)
+            print("\n🔍 Scanning Stream 1: Grow Network (People In Your Tech Sphere)...")
+            try:
+                page.goto("https://www.linkedin.com/mynetwork/grow/", timeout=45000, wait_until="domcontentloaded")
+                time.sleep(3.5)
+                page.evaluate("window.scrollBy(0, 800)")
+                time.sleep(2.0)
 
-                search_url = target["url"]
-                query_name = target["query"]
+                connect_btns = page.query_selector_all("button[aria-label*='Invite'], button:has-text('Connect')")
+                print(f"    Found {len(connect_btns)} direct connect opportunities.")
 
-                print(f"\n🔍 Searching Stream: {query_name}")
-                try:
-                    page.goto(search_url, timeout=45000, wait_until="domcontentloaded")
-                    time.sleep(random.uniform(4.0, 6.0))
-                    page.evaluate("window.scrollBy(0, 1000)")
-                    time.sleep(2.0)
+                for btn in connect_btns:
+                    if sent_connects >= max_connects:
+                        break
 
-                    # Extract all profile /in/ links
-                    profile_links = []
-                    links = page.query_selector_all('a[href*="/in/"]')
-                    for l in links:
-                        href = l.get_attribute("href")
-                        if href and "/in/" in href:
-                            clean_href = href.split("?")[0].rstrip("/")
-                            raw_text = l.inner_text().strip()
-                            name = raw_text.split("\n")[0].strip()
-                            if name and "LinkedIn Member" not in name and len(name) > 2:
-                                if clean_href not in [p["url"] for p in profile_links] and clean_href not in self.history:
-                                    profile_links.append({"name": name, "url": clean_href})
+                    aria = btn.get_attribute("aria-label") or ""
+                    name = aria.replace("Invite", "").replace("to connect", "").strip() or "Tech Professional"
 
-                    print(f"    Discovered {len(profile_links)} fresh profiles to connect with.")
+                    if name in self.history:
+                        continue
 
-                    for profile in profile_links:
-                        if sent_connects >= max_connects:
-                            break
+                    try:
+                        btn.scroll_into_view_if_needed()
+                        time.sleep(1.0)
+                        btn.click()
+                        time.sleep(2.0)
 
-                        name = profile["name"]
-                        p_url = profile["url"]
+                        # Handle possible modal if it pops up
+                        send_without_note = page.query_selector("button[aria-label='Send without a note'], button:has-text('Send without a note')")
+                        if send_without_note and send_without_note.is_visible():
+                            send_without_note.click()
+                            time.sleep(1.0)
 
-                        if p_url in self.history or name in self.history:
-                            continue
+                        sent_connects += 1
+                        self._save_history(name)
+                        print(f"    ✅ [1-Click Connect Sent] ➔ {name} (Total: {sent_connects}/{max_connects})")
 
-                        print(f"\n👉 Visiting Profile: {name} ➔ {p_url}")
-                        try:
-                            page.goto(p_url, timeout=30000, wait_until="domcontentloaded")
-                            time.sleep(random.uniform(3.0, 5.0))
+                        delay = random.uniform(6.0, 9.0)
+                        print(f"    ⏳ Pacing safety delay: {delay:.1f}s...")
+                        time.sleep(delay)
 
-                            # Check for direct Connect button
-                            connect_btn = None
-                            buttons = page.query_selector_all("button")
-                            for btn in buttons:
-                                b_text = btn.inner_text().strip().lower()
-                                if b_text == "connect" or "invite" in b_text:
-                                    connect_btn = btn
-                                    break
+                    except Exception as e:
+                        print(f"    ⚠️ Could not click connect for {name}: {e}")
 
-                            # If not direct, check "More" button
-                            if not connect_btn:
-                                more_btn = page.query_selector("button:has-text('More'), button[aria-label='More actions']")
-                                if more_btn:
-                                    more_btn.click()
-                                    time.sleep(1.0)
-                                    connect_in_dropdown = page.query_selector("div[aria-label*='Invite'], div[role='button']:has-text('Connect'), span:has-text('Connect')")
-                                    if connect_in_dropdown:
-                                        connect_btn = connect_in_dropdown
+            except Exception as e:
+                print(f"⚠️ Error scanning Grow Network: {e}")
 
-                            if not connect_btn:
-                                print(f"    ⏭️ No Connect button found (Already connected / Pending). Skipping.")
-                                self._save_history(p_url)
+            # Stream 2: People Search Streams
+            if sent_connects < max_connects:
+                for target in SEARCH_TARGETS[1:]:
+                    if sent_connects >= max_connects:
+                        break
+
+                    search_url = target["url"]
+                    query_name = target["query"]
+
+                    print(f"\n🔍 Scanning Stream: {query_name}")
+                    try:
+                        page.goto(search_url, timeout=45000, wait_until="domcontentloaded")
+                        time.sleep(4.0)
+                        page.evaluate("window.scrollBy(0, 1000)")
+                        time.sleep(2.0)
+
+                        profile_links = []
+                        links = page.query_selector_all('a[href*="/in/"]')
+                        for l in links:
+                            href = l.get_attribute("href")
+                            if href and "/in/" in href:
+                                clean_href = href.split("?")[0].rstrip("/")
+                                raw_text = l.inner_text().strip()
+                                name = raw_text.split("\n")[0].strip()
+                                if name and "LinkedIn Member" not in name and len(name) > 2:
+                                    if clean_href not in [p["url"] for p in profile_links] and clean_href not in self.history:
+                                        profile_links.append({"name": name, "url": clean_href})
+
+                        print(f"    Found {len(profile_links)} candidate profile links.")
+
+                        for profile in profile_links:
+                            if sent_connects >= max_connects:
+                                break
+
+                            name = profile["name"]
+                            p_url = profile["url"]
+
+                            if p_url in self.history or name in self.history:
                                 continue
 
-                            # Click Connect
-                            connect_btn.click()
-                            time.sleep(random.uniform(2.0, 3.0))
+                            print(f"\n👉 Visiting Profile: {name}")
+                            try:
+                                page.goto(p_url, timeout=30000, wait_until="domcontentloaded")
+                                time.sleep(3.5)
 
-                            # Handle modal: Direct Send without a note
-                            send_without_note_btn = page.query_selector("button[aria-label='Send without a note'], button:has-text('Send without a note')")
-                            if send_without_note_btn and send_without_note_btn.is_visible():
-                                send_without_note_btn.click()
-                                print(f"    ⚡ Sent direct connection request (without note).")
-                            else:
-                                # Standard Send / Invite button
-                                send_btn = page.query_selector("button[aria-label='Send invitation'], button[aria-label='Send now'], button:has-text('Send')")
-                                if send_btn and send_btn.is_visible():
-                                    send_btn.click()
-                                    print(f"    ⚡ Sent direct connection request.")
+                                # Check direct connect button
+                                connect_btn = page.query_selector("button:has-text('Connect'), button[aria-label*='Invite']")
+                                if connect_btn and connect_btn.is_visible():
+                                    connect_btn.click()
+                                    time.sleep(2.0)
 
-                            sent_connects += 1
-                            self._save_history(p_url)
-                            self._save_history(name)
-                            print(f"    ✅ Successfully sent direct connection request to {name}! (Total: {sent_connects}/{max_connects})")
+                                    send_without_note = page.query_selector("button[aria-label='Send without a note'], button:has-text('Send without a note')")
+                                    if send_without_note and send_without_note.is_visible():
+                                        send_without_note.click()
+                                    else:
+                                        send_btn = page.query_selector("button[aria-label='Send now'], button[aria-label='Send invitation'], button:has-text('Send')")
+                                        if send_btn and send_btn.is_visible():
+                                            send_btn.click()
 
-                            sleep_time = random.uniform(6.0, 10.0)
-                            print(f"    ⏳ Pacing safety delay: {sleep_time:.1f}s...")
-                            time.sleep(sleep_time)
+                                    sent_connects += 1
+                                    self._save_history(p_url)
+                                    self._save_history(name)
+                                    print(f"    ✅ [Direct Connect Sent] ➔ {name} (Total: {sent_connects}/{max_connects})")
 
-                        except Exception as e:
-                            print(f"    ⚠️ Could not complete connect for {name}: {e}")
-                            self._save_history(p_url)
+                                    delay = random.uniform(7.0, 11.0)
+                                    print(f"    ⏳ Pacing safety delay: {delay:.1f}s...")
+                                    time.sleep(delay)
+                                else:
+                                    print(f"    ⏭️ Direct connect not visible on profile. Skipping to next.")
+                                    self._save_history(p_url)
 
-                except Exception as e:
-                    print(f"⚠️ Error scanning stream {query_name}: {e}")
+                            except Exception as e:
+                                print(f"    ⚠️ Error connecting with {name}: {e}")
+                                self._save_history(p_url)
+
+                    except Exception as e:
+                        print(f"⚠️ Error scanning search stream: {e}")
 
             browser.close()
 
         print("\n" + "=" * 65)
-        print(f"🎉 DIRECT NETWORKING SESSION COMPLETED! Sent {sent_connects} direct connection requests!")
+        print(f"🎉 NETWORKING SESSION COMPLETED! Successfully dispatched {sent_connects} verified connection requests!")
         print(f"📊 History saved to: {NETWORK_HISTORY_FILE}")
         print("=" * 65)
 
