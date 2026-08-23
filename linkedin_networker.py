@@ -2,7 +2,6 @@ import os
 import json
 import time
 import random
-import re
 from pathlib import Path
 from playwright.sync_api import sync_playwright
 import config
@@ -53,26 +52,13 @@ class LinkedInNetworker:
         except Exception as e:
             print(f"⚠️ Error saving network history: {e}")
 
-    def generate_note(self, name: str, role_type: str) -> str:
-        first_name = name.split()[0] if name else "there"
-        first_name = re.sub(r'[^a-zA-Z]', '', first_name).capitalize() or "there"
-
-        if role_type == "manager":
-            note = f"Hi {first_name} Sir, I'm a Cloud & DevOps Engineer (AWS, Docker, K8s, Terraform) and creator of InfraGenie. Would love to connect and follow your engineering work!"
-        elif role_type == "recruiter":
-            note = f"Hi {first_name}, I'm an Immediate Joiner Cloud & DevOps Engineer (AWS, Docker, K8s, Terraform, Python). Built InfraGenie for automated ECS deployments. Would love to connect!"
-        else:
-            note = f"Hi {first_name}, I'm a Cloud & DevOps Engineer passionate about AWS, K8s, and developer tooling (built InfraGenie & JobHunter). Would love to connect!"
-
-        return note[:295]
-
     def run(self, max_connects: int = MAX_CONNECTS_PER_RUN):
         if not COOKIES_FILE.exists():
             print(f"❌ Error: LinkedIn cookies file not found at {COOKIES_FILE}")
             return
 
         print("=" * 65)
-        print("🤝 AUTONOMOUS LINKEDIN NETWORKER (Profile-Direct Mode)")
+        print("🤝 AUTONOMOUS LINKEDIN NETWORKER (Direct Connect Mode — No Notes)")
         print(f"🎯 Target Max Connects This Run: {max_connects}")
         print(f"🛡️ Safety Pacing: 6-12s human delays enabled")
         print("=" * 65)
@@ -99,7 +85,6 @@ class LinkedInNetworker:
                 if sent_connects >= max_connects:
                     break
 
-                role_type = target["role_type"]
                 search_url = target["url"]
                 query_name = target["query"]
 
@@ -155,13 +140,12 @@ class LinkedInNetworker:
                                 if more_btn:
                                     more_btn.click()
                                     time.sleep(1.0)
-                                    # Look for connect inside dropdown
                                     connect_in_dropdown = page.query_selector("div[aria-label*='Invite'], div[role='button']:has-text('Connect'), span:has-text('Connect')")
                                     if connect_in_dropdown:
                                         connect_btn = connect_in_dropdown
 
                             if not connect_btn:
-                                print(f"    ⏭️ No Connect button found (Already connected or Following). Skipping.")
+                                print(f"    ⏭️ No Connect button found (Already connected / Pending). Skipping.")
                                 self._save_history(p_url)
                                 continue
 
@@ -169,34 +153,24 @@ class LinkedInNetworker:
                             connect_btn.click()
                             time.sleep(random.uniform(2.0, 3.0))
 
-                            # Check for "Add a note" modal
-                            add_note_btn = page.query_selector("button[aria-label='Add a note'], button:has-text('Add a note')")
-                            if add_note_btn and add_note_btn.is_visible():
-                                add_note_btn.click()
-                                time.sleep(random.uniform(1.5, 2.5))
-
-                                note_text = self.generate_note(name, role_type)
-                                textarea = page.query_selector("textarea[name='message'], textarea#custom-message")
-                                if textarea:
-                                    textarea.fill(note_text)
-                                    time.sleep(random.uniform(1.0, 2.0))
-
+                            # Handle modal: Direct Send without a note
+                            send_without_note_btn = page.query_selector("button[aria-label='Send without a note'], button:has-text('Send without a note')")
+                            if send_without_note_btn and send_without_note_btn.is_visible():
+                                send_without_note_btn.click()
+                                print(f"    ⚡ Sent direct connection request (without note).")
+                            else:
+                                # Standard Send / Invite button
                                 send_btn = page.query_selector("button[aria-label='Send invitation'], button[aria-label='Send now'], button:has-text('Send')")
                                 if send_btn and send_btn.is_visible():
                                     send_btn.click()
-                                    print(f"    ✉️ Sent custom note: \"{note_text[:60]}...\"")
-                            else:
-                                send_btn = page.query_selector("button[aria-label='Send without a note'], button[aria-label='Send now'], button:has-text('Send')")
-                                if send_btn and send_btn.is_visible():
-                                    send_btn.click()
-                                    print(f"    ✉️ Sent direct invitation.")
+                                    print(f"    ⚡ Sent direct connection request.")
 
                             sent_connects += 1
                             self._save_history(p_url)
                             self._save_history(name)
-                            print(f"    ✅ Successfully sent connection request to {name}! (Total: {sent_connects}/{max_connects})")
+                            print(f"    ✅ Successfully sent direct connection request to {name}! (Total: {sent_connects}/{max_connects})")
 
-                            sleep_time = random.uniform(7.0, 12.0)
+                            sleep_time = random.uniform(6.0, 10.0)
                             print(f"    ⏳ Pacing safety delay: {sleep_time:.1f}s...")
                             time.sleep(sleep_time)
 
@@ -210,7 +184,7 @@ class LinkedInNetworker:
             browser.close()
 
         print("\n" + "=" * 65)
-        print(f"🎉 NETWORKING SESSION FINISHED! Sent {sent_connects} connection invitations with notes!")
+        print(f"🎉 DIRECT NETWORKING SESSION COMPLETED! Sent {sent_connects} direct connection requests!")
         print(f"📊 History saved to: {NETWORK_HISTORY_FILE}")
         print("=" * 65)
 
