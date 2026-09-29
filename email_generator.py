@@ -16,7 +16,7 @@ class EmailGenerator:
 
 I hope this email finds you well.
 
-I am writing to express my strong interest in the {title} position. As an AI & Cloud Systems Engineer (Immediate Joiner, 0 days notice) with end-to-end production experience building autonomous agentic architectures, scalable GenAI pipelines, and resilient cloud infrastructure, I would love to contribute to your engineering team.
+I am writing to express my strong interest in the {title} position. As an AI & Cloud Systems Engineer with 1+ year of intensive production experience (Immediate Joiner, 0 days notice) building autonomous agentic architectures, scalable GenAI pipelines, and resilient cloud infrastructure, I would love to contribute to your engineering team.
 
 Proven Builder & Production Track Record:
 • Autonomous Agentic AI & Cognitive Memory (F.R.I.D.A.Y.): Creator of Friday (https://github.com/itskie/friday) — an open-source autonomous agent and long-term memory engine with 65+ GitHub Stars, 10 forks, and 280+ PyPI package downloads. Architected dual-layer semantic memory (ChromaDB vector embeddings + Neo4j knowledge graphs) with MCP (Model Context Protocol) tool execution over FastAPI.
@@ -24,6 +24,7 @@ Proven Builder & Production Track Record:
 • Cloud & AI Infrastructure: Deep hands-on experience provisioning and scaling containerized workloads with Docker, Kubernetes, and AWS (EC2, ECS Fargate, EKS, VPC, S3, IAM, CloudWatch).
 • DevSecOps & Automation: Built automated CI/CD pipelines with GitHub Actions, automated vulnerability scanning with Aqua Trivy, and built InfraGenie (https://github.com/itskie/infragenie) for zero-touch cloud provisioning.
 • Tech Alignment: Proficient in Python, FastAPI, Docker, Kubernetes, AWS, Vector DBs, LangChain/RAG, and Linux internals ({skills_str}).
+• Experience & Background: 1+ year of hands-on production engineering experience | BCA in Cloud Computing (Amity University, 8.1 CGPA).
 
 Availability & Preferences:
 • Immediate Joiner (0 days notice period).

@@ -44,12 +44,12 @@ CANDIDATE_PHONE = os.getenv("CANDIDATE_PHONE", "+91 9122927910")
 CANDIDATE_GITHUB = os.getenv("CANDIDATE_GITHUB", "https://github.com/itskie")
 CANDIDATE_LINKEDIN = os.getenv("CANDIDATE_LINKEDIN", "https://linkedin.com/in/itskie")
 
-# SMTP Settings
+# SMTP Settings (Gmail allows up to 500 emails per day)
 SMTP_SERVER = os.getenv("SMTP_SERVER", "smtp.gmail.com")
 SMTP_PORT = int(os.getenv("SMTP_PORT", 465))
 GMAIL_APP_PASSWORD = os.getenv("GMAIL_APP_PASSWORD", "").replace(" ", "")
 
-# Target Keywords & Domains (Heavy AI, Agentic, Cloud & Systems focus)
+# Target Keywords & Domains
 TARGET_KEYWORDS = [
     "ai engineer", "generative ai", "genai", "llm", "agentic", "ai infra", "ai infrastructure",
     "machine learning", "ml engineer", "rag", "langchain", "crewai", "vector db", "chromadb",
@@ -60,5 +60,6 @@ TARGET_KEYWORDS = [
     "backend", "software engineer", "sde", "fresher", "intern", "junior"
 ]
 
-MAX_EXPERIENCE_YEARS = int(os.getenv("MAX_EXPERIENCE_YEARS", 2))
-MAX_DAILY_APPLICATIONS = None  # Unlimited
+# Experience: Target 0 to 4 years. Reject >= 5 years
+MAX_EXPERIENCE_YEARS = int(os.getenv("MAX_EXPERIENCE_YEARS", 4))
+MAX_DAILY_APPLICATIONS = None  # Unlimited (send to all matching opportunities)

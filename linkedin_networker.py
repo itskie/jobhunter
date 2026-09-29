@@ -101,12 +101,25 @@ class LinkedInNetworker:
 
             if not has_cookies:
                 print("\n🌐 Opening LinkedIn in browser window...")
-                page.goto("https://www.linkedin.com/login", timeout=45000)
-                input("\n👉 Press [ENTER] once you are logged in: ")
+                page.goto("https://www.linkedin.com/login", timeout=60000)
+                print("👉 Boss, please log in to LinkedIn in the browser window...")
+                for _ in range(150):
+                    time.sleep(2)
+                    try:
+                        curr = page.url
+                        if any(x in curr for x in ["/feed", "/mynetwork", "/in/", "/search", "/messaging"]):
+                            print("🎉 Login detected automatically!")
+                            break
+                        if page.query_selector(".global-nav, .feed-identity-module"):
+                            print("🎉 Login detected via feed navigation!")
+                            break
+                    except Exception:
+                        pass
+                time.sleep(3)
                 cookies = context.cookies()
                 with open(COOKIES_FILE, "w") as f:
                     json.dump(cookies, f)
-                print("✅ Session cookies saved permanently.\n")
+                print("✅ Session cookies saved permanently!\n")
 
             # Stream 1: Grow Network Page (1-Click Instant Connects)
             print("\n🔍 Scanning Stream 1: Grow Network (AI & Cloud Sphere)...")

@@ -51,7 +51,7 @@ def send_macos_notification(title: str, message: str):
     except Exception:
         pass
 
-async def run_autopilot(dry_run: bool = False, max_scrolls: int = 10):
+async def run_autopilot(dry_run: bool = False, max_scrolls: int = 20):
     print("=" * 65)
     print("🤖 ULTRA-ACCURATE PAN-INDIA AUTO-PILOT JOB APPLIER")
     print(f"📄 Resume Target: {config.RESUME_PATH}")
@@ -85,13 +85,26 @@ async def run_autopilot(dry_run: bool = False, max_scrolls: int = 10):
 
         if not has_cookies:
             print("\n🌐 Opening LinkedIn in browser window...")
-            await page.goto("https://www.linkedin.com/login", timeout=45000)
-            loop = asyncio.get_event_loop()
-            await loop.run_in_executor(None, input, "\n👉 Press [ENTER] once you are logged in: ")
+            await page.goto("https://www.linkedin.com/login", timeout=60000)
+            print("👉 Boss, please log in to LinkedIn in the browser window...")
+            for _ in range(150):
+                await asyncio.sleep(2)
+                try:
+                    curr = page.url
+                    if any(x in curr for x in ["/feed", "/mynetwork", "/in/", "/search", "/messaging"]):
+                        print("🎉 Login detected automatically!")
+                        break
+                    nav = await page.query_selector(".global-nav, .feed-identity-module")
+                    if nav:
+                        print("🎉 Login detected via feed navigation!")
+                        break
+                except Exception:
+                    pass
+            await asyncio.sleep(3)
             cookies = await context.cookies()
             with open(COOKIE_FILE, "w") as f:
                 json.dump(cookies, f)
-            print("✅ Session cookies saved.\n")
+            print("✅ Session cookies saved permanently!\n")
 
         for idx, target_url in enumerate(SEARCH_URLS, 1):
             print(f"\n📡 [{idx}/{len(SEARCH_URLS)}] Crawling: {target_url[:65]}...")
