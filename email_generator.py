@@ -4,32 +4,32 @@ from typing import Dict, Any
 class EmailGenerator:
     @classmethod
     def generate_email(cls, job: Dict[str, Any]) -> Dict[str, str]:
-        title = job.get("title", "Cloud & DevOps Engineer")
+        title = job.get("title", "AI & Cloud Systems Engineer")
         recipient = job.get("primary_email", "recruiter@example.com")
-        skills = job.get("skills", ["AWS", "Docker", "Linux"])
+        skills = job.get("skills", ["Python", "FastAPI", "AWS", "Docker", "Agentic AI"])
 
-        skills_str = ", ".join(skills) if skills else "AWS, Docker, Kubernetes, CI/CD, and Linux"
+        skills_str = ", ".join(skills) if skills else "Python, FastAPI, AWS, Docker, Kubernetes, CI/CD, and AI/LLM Systems"
 
-        subject = f"Application for {title} — {config.CANDIDATE_NAME} (Immediate Joiner)"
+        subject = f"Application for {title} — {config.CANDIDATE_NAME} (AI & Cloud Systems Engineer | Immediate Joiner)"
 
         body = f"""Dear Hiring Team,
 
 I hope this email finds you well.
 
-I am writing to apply for the {title} position. As an Immediate Joiner (0 days notice) with end-to-end production experience across Cloud Infrastructure (AWS), Container Orchestration (Docker/Kubernetes), and Fullstack/Systems Engineering, I would love to contribute to your technical initiatives.
+I am writing to express my strong interest in the {title} position. As an AI & Cloud Systems Engineer (Immediate Joiner, 0 days notice) with end-to-end production experience building autonomous agentic architectures, scalable GenAI pipelines, and resilient cloud infrastructure, I would love to contribute to your engineering team.
 
 Proven Builder & Production Track Record:
-• F.R.I.D.A.Y. (Open Source): Creator of Friday (https://github.com/itskie/friday) — an autonomous memory & cognitive AI infrastructure engine with 65+ GitHub Stars, 10 forks, and 280+ PyPI package downloads. Architecture built on FastAPI, ChromaDB, and Neo4j graph topologies.
-• ReelDM (Production SaaS): Architected and deployed a Meta Business Verified SaaS platform on AWS EC2, managing webhook pipelines, async Celery/Redis queues, PostgreSQL, and resilient microservices.
-• InfraGenie: Built open-source cloud tooling (https://github.com/itskie/infragenie) automating zero-touch AWS ECS Fargate cluster provisioning in under 2 minutes.
-• Cloud & DevSecOps: Deep hands-on proficiency with AWS (EC2, ECS, EKS, VPC, S3, IAM, CloudWatch), Linux kernel administration, automated CI/CD via GitHub Actions, and vulnerability scanning with Aqua Trivy.
-• Tech Alignment: Experienced with {skills_str}.
+• Autonomous Agentic AI & Cognitive Memory (F.R.I.D.A.Y.): Creator of Friday (https://github.com/itskie/friday) — an open-source autonomous agent and long-term memory engine with 65+ GitHub Stars, 10 forks, and 280+ PyPI package downloads. Architected dual-layer semantic memory (ChromaDB vector embeddings + Neo4j knowledge graphs) with MCP (Model Context Protocol) tool execution over FastAPI.
+• Production GenAI & SaaS Infrastructure (ReelDM): Architected and deployed a Meta Business Verified platform on AWS EC2, managing webhook pipelines, asynchronous Celery/Redis background task queues, and LLM-driven autonomous customer workflows.
+• Cloud & AI Infrastructure: Deep hands-on experience provisioning and scaling containerized workloads with Docker, Kubernetes, and AWS (EC2, ECS Fargate, EKS, VPC, S3, IAM, CloudWatch).
+• DevSecOps & Automation: Built automated CI/CD pipelines with GitHub Actions, automated vulnerability scanning with Aqua Trivy, and built InfraGenie (https://github.com/itskie/infragenie) for zero-touch cloud provisioning.
+• Tech Alignment: Proficient in Python, FastAPI, Docker, Kubernetes, AWS, Vector DBs, LangChain/RAG, and Linux internals ({skills_str}).
 
 Availability & Preferences:
 • Immediate Joiner (0 days notice period).
-• Based in India; open to on-site (Bangalore / Pune / Hyderabad / NCR), hybrid, or remote engineering roles.
+• Based in India; open to on-site (Bangalore / NCR / Pune / Hyderabad), hybrid, or remote engineering roles.
 
-My latest resume is attached for your review. I would welcome the opportunity for a brief introductory discussion.
+My latest resume is attached for your review. I would welcome the opportunity for a brief introductory conversation.
 
 GitHub: {config.CANDIDATE_GITHUB}
 LinkedIn: {config.CANDIDATE_LINKEDIN}
@@ -38,7 +38,7 @@ Thank you for your time and consideration!
 
 Best regards,
 {config.CANDIDATE_NAME}
-Systems, Cloud & DevOps Engineer
+AI & Cloud Systems Engineer
 {config.CANDIDATE_EMAIL} | {config.CANDIDATE_PHONE}"""
 
         return {

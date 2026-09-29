@@ -4,22 +4,22 @@ from auto_mailer import AutoMailer
 
 NEW_TARGETS = [
     {
+        "company": "Inexture Solutions",
+        "email": "hr@inexture.com",
+        "title": "DevOps Engineer / Junior AI Developer",
+        "role_focus": "AI infrastructure, Python backends, Docker/Kubernetes, and DevOps automation"
+    },
+    {
         "company": "SBNA Software Solutions",
         "email": "hr@sbnasoftware.com",
         "title": "AWS Cloud Application Support Engineer",
         "role_focus": "AWS Cloud Infrastructure, Application Support, Linux administration, and system troubleshooting"
     },
     {
-        "company": "Inexture Solutions",
-        "email": "hr@inexture.com",
-        "title": "DevOps Engineer / Junior AI Developer",
-        "role_focus": "DevOps automation, Docker, Kubernetes, CI/CD pipelines, and Python AI Infrastructure"
-    },
-    {
         "company": "Briskminds",
         "email": "hr@briskminds.com",
-        "title": "Associate Software Engineer I (Cloud & Backend)",
-        "role_focus": "Cloud engineering, backend development, and scalable software systems"
+        "title": "Associate Software Engineer (Cloud & AI Backend)",
+        "role_focus": "FastAPI/Python backend development, AI integrations, and cloud engineering"
     },
     {
         "company": "VTECH Integrated Solutions",
@@ -38,13 +38,13 @@ def build_body(target: dict) -> str:
 
 I hope this email finds you well.
 
-I am writing to actively apply for the {title} position at {company}. As an Immediate Joiner (0 days notice) with hands-on expertise in {role_focus}, I am eager to contribute to your engineering and cloud operations teams.
+I am writing to actively apply for the {title} position at {company}. As an AI & Cloud Systems Engineer (Immediate Joiner, 0 days notice) with hands-on expertise in {role_focus}, I am eager to contribute to your engineering and product teams.
 
 Proven Builder & Production Track Record:
-• F.R.I.D.A.Y. (Open Source): Creator of Friday (https://github.com/itskie/friday) — an autonomous memory & cognitive AI infrastructure engine with 65+ GitHub Stars, 10 forks, and 280+ PyPI package downloads. Architecture built on FastAPI, ChromaDB, and Neo4j graph topologies.
-• ReelDM (Production SaaS): Architected and deployed a Meta Business Verified SaaS platform on AWS EC2, managing webhook pipelines, async Celery/Redis queues, PostgreSQL, and resilient microservices.
-• InfraGenie: Built open-source cloud tooling (https://github.com/itskie/infragenie) automating zero-touch AWS ECS Fargate cluster provisioning in under 2 minutes.
-• Cloud & DevSecOps: Deep hands-on proficiency with AWS (EC2, ECS, EKS, VPC, S3, IAM, CloudWatch), Linux kernel administration, automated CI/CD via GitHub Actions, and vulnerability scanning with Aqua Trivy.
+• Autonomous Agentic AI & Cognitive Memory (F.R.I.D.A.Y.): Creator of Friday (https://github.com/itskie/friday) — an open-source autonomous agent and long-term memory engine with 65+ GitHub Stars, 10 forks, and 280+ PyPI package downloads. Architected dual-layer semantic memory (ChromaDB vector embeddings + Neo4j knowledge graphs) with MCP (Model Context Protocol) tool execution over FastAPI.
+• Production GenAI & SaaS Infrastructure (ReelDM): Architected and deployed a Meta Business Verified platform on AWS EC2, managing webhook pipelines, asynchronous Celery/Redis background task queues, and LLM-driven autonomous customer workflows.
+• Cloud & AI Infrastructure: Deep hands-on experience provisioning and scaling containerized workloads with Docker, Kubernetes, and AWS (EC2, ECS Fargate, EKS, VPC, S3, IAM, CloudWatch).
+• DevSecOps & Automation: Built automated CI/CD pipelines with GitHub Actions, automated vulnerability scanning with Aqua Trivy, and built InfraGenie (https://github.com/itskie/infragenie) for zero-touch cloud provisioning.
 • Education & Background: BCA in Cloud Computing from Amity University (CGPA: 8.1/10).
 
 Availability & Preferences:
@@ -61,12 +61,12 @@ Thank you for your time and consideration!
 
 Best regards,
 Shobhit Kumar Singh
-Systems, Cloud & DevOps Engineer
+AI & Cloud Systems Engineer
 itskie7910@gmail.com | +91 9122927910"""
 
 def main():
     print("=" * 65)
-    print("🚀 DISPATCHING TO NEW JOB LEADS")
+    print("🚀 DISPATCHING TO TARGETED LEADS")
     print(f"📄 Resume Target: {config.RESUME_PATH}")
     print("=" * 65)
 
@@ -77,7 +77,7 @@ def main():
         company = target["company"]
         email = target["email"]
         title = target["title"]
-        subject = f"Application for {title} — Shobhit Kumar Singh (Immediate Joiner)"
+        subject = f"Application for {title} — Shobhit Kumar Singh (AI & Cloud Systems Engineer | Immediate Joiner)"
         body = build_body(target)
 
         print(f"\n[{i}/{len(NEW_TARGETS)}] Target: {company} ➔ {email}")

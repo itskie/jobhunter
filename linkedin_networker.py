@@ -12,26 +12,31 @@ NETWORK_HISTORY_FILE = BASE_DIR / "network_history.json"
 SEARCH_TARGETS = [
     {
         "role_type": "grow",
-        "query": "People You May Know in Tech & Cloud",
+        "query": "People You May Know in AI & Cloud",
         "url": "https://www.linkedin.com/mynetwork/grow/"
     },
     {
-        "role_type": "manager",
+        "role_type": "ai_manager",
+        "query": "Engineering Manager AI Bangalore",
+        "url": "https://www.linkedin.com/search/results/people/?keywords=Engineering%20Manager%20AI%20Bangalore&origin=GLOBAL_SEARCH_HEADER"
+    },
+    {
+        "role_type": "ai_recruiter",
+        "query": "Technical Recruiter AI India",
+        "url": "https://www.linkedin.com/search/results/people/?keywords=Technical%20Recruiter%20AI%20India&origin=GLOBAL_SEARCH_HEADER"
+    },
+    {
+        "role_type": "cto_founder",
+        "query": "Founder CTO AI Bangalore",
+        "url": "https://www.linkedin.com/search/results/people/?keywords=Founder%20CTO%20AI%20Bangalore&origin=GLOBAL_SEARCH_HEADER"
+    },
+    {
+        "role_type": "devops_manager",
         "query": "Engineering Manager DevOps India",
         "url": "https://www.linkedin.com/search/results/people/?keywords=Engineering%20Manager%20DevOps%20India&origin=GLOBAL_SEARCH_HEADER"
     },
     {
-        "role_type": "recruiter",
-        "query": "Technical Recruiter Cloud DevOps India",
-        "url": "https://www.linkedin.com/search/results/people/?keywords=Technical%20Recruiter%20Cloud%20DevOps%20India&origin=GLOBAL_SEARCH_HEADER"
-    },
-    {
-        "role_type": "cto_founder",
-        "query": "Founder CTO Bangalore",
-        "url": "https://www.linkedin.com/search/results/people/?keywords=Founder%20CTO%20Bangalore&origin=GLOBAL_SEARCH_HEADER"
-    },
-    {
-        "role_type": "em_backend",
+        "role_type": "backend_manager",
         "query": "Engineering Manager Backend Bangalore",
         "url": "https://www.linkedin.com/search/results/people/?keywords=Engineering%20Manager%20Backend%20Bangalore&origin=GLOBAL_SEARCH_HEADER"
     }
@@ -65,7 +70,7 @@ class LinkedInNetworker:
         has_cookies = COOKIES_FILE.exists()
 
         print("=" * 65)
-        print("🤝 AUTONOMOUS LINKEDIN NETWORKER (Verified 1-Click Connect)")
+        print("🤝 AUTONOMOUS LINKEDIN NETWORKER (AI & Systems Edition)")
         print(f"🎯 Target Max Connects This Run: {max_connects}")
         print(f"🛡️ Safety Pacing: 6-10s human delays enabled")
         print("=" * 65)
@@ -104,7 +109,7 @@ class LinkedInNetworker:
                 print("✅ Session cookies saved permanently.\n")
 
             # Stream 1: Grow Network Page (1-Click Instant Connects)
-            print("\n🔍 Scanning Stream 1: Grow Network (People In Your Tech Sphere)...")
+            print("\n🔍 Scanning Stream 1: Grow Network (AI & Cloud Sphere)...")
             try:
                 page.goto("https://www.linkedin.com/mynetwork/grow/", timeout=45000, wait_until="domcontentloaded")
                 time.sleep(3.5)

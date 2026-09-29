@@ -38,25 +38,26 @@ def find_latest_resume() -> str:
 RESUME_PATH = os.getenv("RESUME_PATH", find_latest_resume())
 
 # Candidate Details (Loaded from .env / Environment)
-CANDIDATE_NAME = os.getenv("CANDIDATE_NAME", "Your Name")
-CANDIDATE_EMAIL = os.getenv("CANDIDATE_EMAIL", "your_email@gmail.com")
-CANDIDATE_PHONE = os.getenv("CANDIDATE_PHONE", "+91 9876543210")
-CANDIDATE_GITHUB = os.getenv("CANDIDATE_GITHUB", "https://github.com/yourusername")
-CANDIDATE_LINKEDIN = os.getenv("CANDIDATE_LINKEDIN", "https://linkedin.com/in/yourprofile")
+CANDIDATE_NAME = os.getenv("CANDIDATE_NAME", "Shobhit Kumar Singh")
+CANDIDATE_EMAIL = os.getenv("CANDIDATE_EMAIL", "itskie7910@gmail.com")
+CANDIDATE_PHONE = os.getenv("CANDIDATE_PHONE", "+91 9122927910")
+CANDIDATE_GITHUB = os.getenv("CANDIDATE_GITHUB", "https://github.com/itskie")
+CANDIDATE_LINKEDIN = os.getenv("CANDIDATE_LINKEDIN", "https://linkedin.com/in/itskie")
 
 # SMTP Settings
 SMTP_SERVER = os.getenv("SMTP_SERVER", "smtp.gmail.com")
 SMTP_PORT = int(os.getenv("SMTP_PORT", 465))
 GMAIL_APP_PASSWORD = os.getenv("GMAIL_APP_PASSWORD", "").replace(" ", "")
 
-# Target Keywords & Domains
+# Target Keywords & Domains (Heavy AI, Agentic, Cloud & Systems focus)
 TARGET_KEYWORDS = [
-    "devops", "cloud", "aws", "infrastructure", "ai infra", "platform engineer",
+    "ai engineer", "generative ai", "genai", "llm", "agentic", "ai infra", "ai infrastructure",
+    "machine learning", "ml engineer", "rag", "langchain", "crewai", "vector db", "chromadb",
+    "neo4j", "nlp", "fastapi", "devops", "cloud", "aws", "infrastructure", "platform engineer",
     "site reliability", "sre", "kubernetes", "k8s", "docker", "terraform", "iac",
     "python", "linux", "sysadmin", "system administrator", "ci/cd", "github actions",
     "devsecops", "cloud security", "trivy", "sonarqube", "prometheus", "grafana",
-    "elk", "fastapi", "server specialist", "cloud operations", "cloud trainee",
-    "build and release", "cloud migration", "backend", "langchain", "rag"
+    "backend", "software engineer", "sde", "fresher", "intern", "junior"
 ]
 
 MAX_EXPERIENCE_YEARS = int(os.getenv("MAX_EXPERIENCE_YEARS", 2))

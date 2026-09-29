@@ -31,6 +31,12 @@ SEARCH_URLS = [
     "https://www.linkedin.com/search/results/content/?keywords=%22hiring%22%20%22kubernetes%22%20%22email%22&sortBy=%22date_posted%22",
     "https://www.linkedin.com/search/results/content/?keywords=%22hiring%22%20%22terraform%22%20%22email%22&sortBy=%22date_posted%22",
     
+    # AI, LLM & GenAI High-Intent Feeds
+    "https://www.linkedin.com/search/results/content/?keywords=%22hiring%22%20%22ai%20engineer%22%20%22email%22&sortBy=%22date_posted%22",
+    "https://www.linkedin.com/search/results/content/?keywords=%22hiring%22%20%22generative%20ai%22%20%22email%22&sortBy=%22date_posted%22",
+    "https://www.linkedin.com/search/results/content/?keywords=%22hiring%22%20%22llm%22%20%22email%22&sortBy=%22date_posted%22",
+    "https://www.linkedin.com/search/results/content/?keywords=%22hiring%22%20%22fastapi%22%20%22email%22&sortBy=%22date_posted%22",
+    "https://www.linkedin.com/search/results/content/?keywords=%22share%20resume%22%20%22ai%22&sortBy=%22date_posted%22",
     # Location Specific
     "https://www.linkedin.com/search/results/content/?keywords=%22hiring%22%20%22devops%22%20bangalore%20email&sortBy=%22date_posted%22",
     "https://www.linkedin.com/search/results/content/?keywords=%22hiring%22%20%22devops%22%20pune%20email&sortBy=%22date_posted%22",

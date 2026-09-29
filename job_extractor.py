@@ -4,13 +4,13 @@ from typing import List, Dict, Any, Optional
 EMAIL_REGEX = r'[a-zA-Z0-9_.+-]+@[a-zA-Z0-9-]+\.[a-zA-Z0-9-.]+'
 
 DEV_KEYWORDS = [
-    "devops", "cloud", "aws", "infrastructure", "ai infra", "platform engineer",
+    "ai engineer", "generative ai", "genai", "llm", "agentic", "ai infra", "ai infrastructure",
+    "machine learning", "ml engineer", "rag", "langchain", "crewai", "vector db", "chromadb",
+    "neo4j", "nlp", "fastapi", "devops", "cloud", "aws", "infrastructure", "platform engineer",
     "site reliability", "sre", "kubernetes", "k8s", "docker", "terraform", "iac",
     "python", "linux", "sysadmin", "system administrator", "ci/cd", "github actions",
     "devsecops", "cloud security", "trivy", "sonarqube", "prometheus", "grafana",
-    "elk", "fastapi", "server specialist", "cloud operations", "cloud trainee",
-    "build and release", "cloud migration", "backend", "langchain", "rag",
-    "fresher", "intern", "junior", "fullstack", "software engineer", "sde", "ai engineer"
+    "backend", "fullstack", "software engineer", "sde", "fresher", "intern", "junior"
 ]
 
 class JobPostExtractor:
@@ -57,16 +57,16 @@ class JobPostExtractor:
             return None
 
         lines = [l.strip() for l in post_text.strip().split("\n") if l.strip()]
-        title = "Cloud & DevOps Engineer"
+        title = "AI & Cloud Systems Engineer"
         for line in lines[:6]:
             line_clean = re.sub(r'^(we are hiring|hiring for|urgently hiring|looking for|opening for|position)\s*[:\-–]?\s*', '', line, flags=re.IGNORECASE).strip()
-            if any(k in line.lower() for k in ["engineer", "developer", "specialist", "intern", "trainee", "architect", "lead", "devops", "cloud", "sre"]):
+            if any(k in line.lower() for k in ["ai", "machine learning", "engineer", "developer", "specialist", "intern", "trainee", "architect", "lead", "devops", "cloud", "sre"]):
                 title = line_clean[:65].strip()
                 break
 
         # Comprehensive skill detection
         skills_found = []
-        for s in ["AWS", "Kubernetes", "Docker", "Terraform", "CI/CD", "GitHub Actions", "Python", "Linux", "FastAPI", "Prometheus", "Grafana", "Trivy", "SonarQube", "ELK", "SRE", "LangChain", "RAG", "Bash", "PostgreSQL", "Nginx", "Redis"]:
+        for s in ["Python", "FastAPI", "AWS", "Kubernetes", "Docker", "Terraform", "CI/CD", "GitHub Actions", "LangChain", "RAG", "ChromaDB", "Neo4j", "Celery", "Redis", "PostgreSQL", "Linux", "Trivy", "Prometheus", "Grafana", "MCP"]:
             if re.search(rf'\b{re.escape(s)}\b', post_text, re.IGNORECASE):
                 skills_found.append(s)
 
