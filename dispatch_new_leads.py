@@ -38,17 +38,20 @@ def build_body(target: dict) -> str:
 
 I hope this email finds you well.
 
-I am writing to actively apply for the {title} position at {company}. As an Immediate Joiner with hands-on expertise in {role_focus}, I am eager to contribute to your engineering and cloud operations teams.
+I am writing to actively apply for the {title} position at {company}. As an Immediate Joiner (0 days notice) with hands-on expertise in {role_focus}, I am eager to contribute to your engineering and cloud operations teams.
 
-Key Highlights of My Experience:
-• Cloud Infrastructure & AWS: Hands-on experience with AWS core services (EC2, ECS Fargate, EKS, VPC, S3, IAM, CloudWatch) and Linux system administration.
-• Containerization & DevSecOps: Dockerized microservices, configured GitHub Actions CI/CD pipelines, and integrated automated security vulnerability scanning with Aqua Trivy.
-• Project & Builder Proof: Built InfraGenie (https://github.com/itskie/infragenie), an open-source tool that automates zero-touch cloud deployments to AWS ECS in <2 minutes.
-• Work Experience: DevOps Engineer Intern at WebArclight | BCA in Cloud Computing from Amity University (CGPA: 8.1/10).
+Proven Builder & Production Track Record:
+• F.R.I.D.A.Y. (Open Source): Creator of Friday (https://github.com/itskie/friday) — an autonomous memory & cognitive AI infrastructure engine with 65+ GitHub Stars, 10 forks, and 280+ PyPI package downloads. Architecture built on FastAPI, ChromaDB, and Neo4j graph topologies.
+• ReelDM (Production SaaS): Architected and deployed a Meta Business Verified SaaS platform on AWS EC2, managing webhook pipelines, async Celery/Redis queues, PostgreSQL, and resilient microservices.
+• InfraGenie: Built open-source cloud tooling (https://github.com/itskie/infragenie) automating zero-touch AWS ECS Fargate cluster provisioning in under 2 minutes.
+• Cloud & DevSecOps: Deep hands-on proficiency with AWS (EC2, ECS, EKS, VPC, S3, IAM, CloudWatch), Linux kernel administration, automated CI/CD via GitHub Actions, and vulnerability scanning with Aqua Trivy.
+• Education & Background: BCA in Cloud Computing from Amity University (CGPA: 8.1/10).
 
-I am based in India, an Immediate Joiner (0 days notice period), and open to on-site, hybrid, or remote work arrangements (including Bangalore, Coimbatore, Ahmedabad, or any {company} location).
+Availability & Preferences:
+• Immediate Joiner (0 days notice period).
+• Based in India; open to on-site, hybrid, or remote work arrangements.
 
-I have attached my latest resume for your review. Would greatly appreciate the opportunity to connect for a brief introductory conversation.
+My latest resume is attached for your review. I would greatly appreciate the opportunity to connect for a brief introductory conversation.
 
 GitHub: https://github.com/itskie
 LinkedIn: https://linkedin.com/in/itskie
@@ -58,12 +61,12 @@ Thank you for your time and consideration!
 
 Best regards,
 Shobhit Kumar Singh
-Cloud & DevOps Engineer
+Systems, Cloud & DevOps Engineer
 itskie7910@gmail.com | +91 9122927910"""
 
 def main():
     print("=" * 65)
-    print("🚀 DISPATCHING TO 4 NEW JOB LEADS")
+    print("🚀 DISPATCHING TO NEW JOB LEADS")
     print(f"📄 Resume Target: {config.RESUME_PATH}")
     print("=" * 65)
 
@@ -77,7 +80,7 @@ def main():
         subject = f"Application for {title} — Shobhit Kumar Singh (Immediate Joiner)"
         body = build_body(target)
 
-        print(f"\n[{i}/{len(NEW_TARGETS)}] Dispatching to: {company} ➔ {email}")
+        print(f"\n[{i}/{len(NEW_TARGETS)}] Target: {company} ➔ {email}")
 
         if mailer.is_already_applied(email):
             print(f"    ⏭️ Already applied previously. Skipping.")

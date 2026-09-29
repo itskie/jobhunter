@@ -24,10 +24,20 @@ SEARCH_TARGETS = [
         "role_type": "recruiter",
         "query": "Technical Recruiter Cloud DevOps India",
         "url": "https://www.linkedin.com/search/results/people/?keywords=Technical%20Recruiter%20Cloud%20DevOps%20India&origin=GLOBAL_SEARCH_HEADER"
+    },
+    {
+        "role_type": "cto_founder",
+        "query": "Founder CTO Bangalore",
+        "url": "https://www.linkedin.com/search/results/people/?keywords=Founder%20CTO%20Bangalore&origin=GLOBAL_SEARCH_HEADER"
+    },
+    {
+        "role_type": "em_backend",
+        "query": "Engineering Manager Backend Bangalore",
+        "url": "https://www.linkedin.com/search/results/people/?keywords=Engineering%20Manager%20Backend%20Bangalore&origin=GLOBAL_SEARCH_HEADER"
     }
 ]
 
-MAX_CONNECTS_PER_RUN = 10
+MAX_CONNECTS_PER_RUN = 12
 
 class LinkedInNetworker:
     def __init__(self):
@@ -52,9 +62,7 @@ class LinkedInNetworker:
             print(f"⚠️ Error saving network history: {e}")
 
     def run(self, max_connects: int = MAX_CONNECTS_PER_RUN):
-        if not COOKIES_FILE.exists():
-            print(f"❌ Error: LinkedIn cookies file not found at {COOKIES_FILE}")
-            return
+        has_cookies = COOKIES_FILE.exists()
 
         print("=" * 65)
         print("🤝 AUTONOMOUS LINKEDIN NETWORKER (Verified 1-Click Connect)")
@@ -66,7 +74,7 @@ class LinkedInNetworker:
 
         with sync_playwright() as p:
             browser = p.chromium.launch(
-                headless=True,
+                headless=has_cookies,
                 args=["--disable-blink-features=AutomationControlled", "--no-sandbox"]
             )
             context = browser.new_context(
@@ -74,11 +82,26 @@ class LinkedInNetworker:
                 viewport={"width": 1280, "height": 800}
             )
 
-            with open(COOKIES_FILE, "r") as f:
-                cookies = json.load(f)
-            context.add_cookies(cookies)
+            if has_cookies:
+                try:
+                    with open(COOKIES_FILE, "r") as f:
+                        cookies = json.load(f)
+                    context.add_cookies(cookies)
+                    print("🔑 Loaded saved LinkedIn session cookies.")
+                except Exception as e:
+                    print(f"⚠️ Failed to load cookies: {e}")
+                    has_cookies = False
 
             page = context.new_page()
+
+            if not has_cookies:
+                print("\n🌐 Opening LinkedIn in browser window...")
+                page.goto("https://www.linkedin.com/login", timeout=45000)
+                input("\n👉 Press [ENTER] once you are logged in: ")
+                cookies = context.cookies()
+                with open(COOKIES_FILE, "w") as f:
+                    json.dump(cookies, f)
+                print("✅ Session cookies saved permanently.\n")
 
             # Stream 1: Grow Network Page (1-Click Instant Connects)
             print("\n🔍 Scanning Stream 1: Grow Network (People In Your Tech Sphere)...")
@@ -208,7 +231,7 @@ class LinkedInNetworker:
             browser.close()
 
         print("\n" + "=" * 65)
-        print(f"🎉 NETWORKING SESSION COMPLETED! Successfully dispatched {sent_connects} verified connection requests!")
+        print(f"🎉 NETWORKING SESSION COMPLETED! Dispatched {sent_connects} connection requests!")
         print(f"📊 History saved to: {NETWORK_HISTORY_FILE}")
         print("=" * 65)
 

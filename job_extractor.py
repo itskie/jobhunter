@@ -10,20 +10,20 @@ DEV_KEYWORDS = [
     "devsecops", "cloud security", "trivy", "sonarqube", "prometheus", "grafana",
     "elk", "fastapi", "server specialist", "cloud operations", "cloud trainee",
     "build and release", "cloud migration", "backend", "langchain", "rag",
-    "fresher", "intern", "junior"
+    "fresher", "intern", "junior", "fullstack", "software engineer", "sde", "ai engineer"
 ]
 
 class JobPostExtractor:
     @staticmethod
     def extract_emails(text: str) -> List[str]:
         emails = re.findall(EMAIL_REGEX, text, re.IGNORECASE)
-        cleaned = [e.strip().lower() for e in emails if not e.lower().endswith((".png", ".jpg", ".svg", ".gif", ".webp", ".jpeg"))]
+        cleaned = [e.strip().lower() for e in emails if not e.lower().endswith((".png", ".jpg", ".svg", ".gif", ".webp", ".jpeg", ".ai"))]
         return list(dict.fromkeys(cleaned))
 
     @staticmethod
     def extract_experience_years(text: str) -> Dict[str, Any]:
         text_lower = text.lower()
-        if any(w in text_lower for w in ["fresher", "fresh graduate", "intern", "internship", "0-1 year", "0-1 yr", "0 to 1", "entry level"]):
+        if any(w in text_lower for w in ["fresher", "fresh graduate", "intern", "internship", "0-1 year", "0-1 yr", "0 to 1", "entry level", "immediate joiner"]):
             return {"min_exp": 0, "max_exp": 1, "is_fresher_friendly": True}
         
         match = re.search(r'(\d+)\s*[-–to]\s*(\d+)\s*(?:years?|yrs?)', text_lower)
@@ -58,14 +58,15 @@ class JobPostExtractor:
 
         lines = [l.strip() for l in post_text.strip().split("\n") if l.strip()]
         title = "Cloud & DevOps Engineer"
-        for line in lines[:5]:
-            if any(k in line.lower() for k in ["hiring", "looking for", "role", "engineer", "intern", "developer", "specialist", "trainee"]):
-                title = line
+        for line in lines[:6]:
+            line_clean = re.sub(r'^(we are hiring|hiring for|urgently hiring|looking for|opening for|position)\s*[:\-–]?\s*', '', line, flags=re.IGNORECASE).strip()
+            if any(k in line.lower() for k in ["engineer", "developer", "specialist", "intern", "trainee", "architect", "lead", "devops", "cloud", "sre"]):
+                title = line_clean[:65].strip()
                 break
 
         # Comprehensive skill detection
         skills_found = []
-        for s in ["AWS", "Kubernetes", "Docker", "Terraform", "CI/CD", "GitHub Actions", "Python", "Linux", "FastAPI", "Prometheus", "Grafana", "Trivy", "SonarQube", "ELK", "SRE", "LangChain", "RAG", "Bash", "PostgreSQL", "Nginx"]:
+        for s in ["AWS", "Kubernetes", "Docker", "Terraform", "CI/CD", "GitHub Actions", "Python", "Linux", "FastAPI", "Prometheus", "Grafana", "Trivy", "SonarQube", "ELK", "SRE", "LangChain", "RAG", "Bash", "PostgreSQL", "Nginx", "Redis"]:
             if re.search(rf'\b{re.escape(s)}\b', post_text, re.IGNORECASE):
                 skills_found.append(s)
 

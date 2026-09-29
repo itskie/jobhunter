@@ -8,7 +8,7 @@ class EmailGenerator:
         recipient = job.get("primary_email", "recruiter@example.com")
         skills = job.get("skills", ["AWS", "Docker", "Linux"])
 
-        skills_str = ", ".join(skills) if skills else "AWS, Docker, CI/CD, and Linux"
+        skills_str = ", ".join(skills) if skills else "AWS, Docker, Kubernetes, CI/CD, and Linux"
 
         subject = f"Application for {title} — {config.CANDIDATE_NAME} (Immediate Joiner)"
 
@@ -16,28 +16,29 @@ class EmailGenerator:
 
 I hope this email finds you well.
 
-I am writing to express my strong interest in the {title} role. As an Immediate Joiner with hands-on experience in Cloud Infrastructure (AWS), containerization (Docker/Kubernetes), and Infrastructure as Code (Terraform), I would love to contribute to your engineering operations.
+I am writing to apply for the {title} position. As an Immediate Joiner (0 days notice) with end-to-end production experience across Cloud Infrastructure (AWS), Container Orchestration (Docker/Kubernetes), and Fullstack/Systems Engineering, I would love to contribute to your technical initiatives.
 
-Key Highlights of My Experience:
-• Cloud & Infrastructure: Hands-on experience with AWS core services (EC2, ECS Fargate, EKS, VPC, S3, IAM, CloudWatch) and Linux system administration.
-• Containers & DevSecOps: Containerized microservices with Docker, built automated CI/CD pipelines via GitHub Actions, and implemented automated security vulnerability scanning with Aqua Trivy.
-• Project & Builder Proof: Built InfraGenie ({config.CANDIDATE_GITHUB}/infragenie), an open-source tool that provisions zero-touch AWS ECS clusters in <2 minutes.
-• Skills Alignment: Hands-on proficiency in {skills_str}.
-• Education & Background: Strong foundation in Cloud Computing.
+Proven Builder & Production Track Record:
+• F.R.I.D.A.Y. (Open Source): Creator of Friday (https://github.com/itskie/friday) — an autonomous memory & cognitive AI infrastructure engine with 65+ GitHub Stars, 10 forks, and 280+ PyPI package downloads. Architecture built on FastAPI, ChromaDB, and Neo4j graph topologies.
+• ReelDM (Production SaaS): Architected and deployed a Meta Business Verified SaaS platform on AWS EC2, managing webhook pipelines, async Celery/Redis queues, PostgreSQL, and resilient microservices.
+• InfraGenie: Built open-source cloud tooling (https://github.com/itskie/infragenie) automating zero-touch AWS ECS Fargate cluster provisioning in under 2 minutes.
+• Cloud & DevSecOps: Deep hands-on proficiency with AWS (EC2, ECS, EKS, VPC, S3, IAM, CloudWatch), Linux kernel administration, automated CI/CD via GitHub Actions, and vulnerability scanning with Aqua Trivy.
+• Tech Alignment: Experienced with {skills_str}.
 
-I am based in India, an Immediate Joiner (0 days notice), and open to on-site, hybrid, or remote work arrangements.
+Availability & Preferences:
+• Immediate Joiner (0 days notice period).
+• Based in India; open to on-site (Bangalore / Pune / Hyderabad / NCR), hybrid, or remote engineering roles.
 
-I have attached my latest resume for your review. Would greatly appreciate the opportunity to connect for a brief introductory conversation.
+My latest resume is attached for your review. I would welcome the opportunity for a brief introductory discussion.
 
 GitHub: {config.CANDIDATE_GITHUB}
 LinkedIn: {config.CANDIDATE_LINKEDIN}
-Phone: {config.CANDIDATE_PHONE}
 
 Thank you for your time and consideration!
 
 Best regards,
 {config.CANDIDATE_NAME}
-Cloud & DevOps Engineer
+Systems, Cloud & DevOps Engineer
 {config.CANDIDATE_EMAIL} | {config.CANDIDATE_PHONE}"""
 
         return {
